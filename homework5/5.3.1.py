@@ -10,27 +10,29 @@ class RationalValueError(Exception):
 
 
 class Rational:
-
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], Rational):
-            self.n, self.d = args[0].n, args[0].d
-        elif len(args) == 1 and isinstance(args[0], str):
-            try:
-                n, d = map(int, args[0].split("/"))
-            except ValueError:
-                raise RationalValueError("Некоректний формат рядка.")
-            if d == 0:
-                raise RationalError("Знаменник не може дорівнювати нулю.")
-            self.n, self.d = n, d
+        if len(args) == 1:
+            arg = args[0]
+            if isinstance(arg, Rational):
+                self.n, self.d = arg.n, arg.d
+            elif isinstance(arg, str):
+                try:
+                    self.n, self.d = map(int, arg.split("/"))
+                except ValueError:
+                    raise RationalValueError("Некоректний формат рядка.")
+            elif isinstance(arg, int):
+                self.n, self.d = arg, 1
+            else:
+                raise RationalValueError("Некоректні аргументи.")
         elif len(args) == 2:
-            n, d = args
-            if not (isinstance(n, int) and isinstance(d, int)):
+            self.n, self.d = args
+            if not (isinstance(self.n, int) and isinstance(self.d, int)):
                 raise RationalValueError("Чисельник і знаменник мають бути цілими.")
-            if d == 0:
-                raise RationalError("Знаменник не може дорівнювати нулю.")
-            self.n, self.d = n, d
         else:
-            raise RationalValueError("Некоректні аргументи конструктора.")
+            raise RationalValueError("Некоректні аргументи.")
+
+        if self.d == 0:
+            raise RationalError("Знаменник не може дорівнювати нулю.")
 
         g = gcd(self.n, self.d)
         self.n //= g
@@ -85,53 +87,32 @@ class Rational:
             self.d = value
         else:
             raise KeyError("Ключ має бути 'n' або 'd'.")
+
         g = gcd(self.n, self.d)
         self.n //= g
         self.d //= g
 
     def __str__(self):
-        return f"{self.n}/{self.d}"
+        return str(self.n) if self.d == 1 else f"{self.n}/{self.d}"
 
 
-class RationalList:
+def evaluate_expressions_from_file(filename="input01.txt"):
+    with open(filename, "r", encoding="utf-8") as file:
+        for line in file:
+            expr = line.strip()
+            if not expr:
+                continue
 
-    def __init__(self):
-        self.data = []
+            tokens = []
+            for t in expr.split():
+                if t in ("+", "-", "*", "/"):
+                    tokens.append(t)
+                else:
+                    tokens.append(f"Rational('{t}')" if "/" in t else f"Rational({t})")
 
-    def append(self, value):
-        if isinstance(value, Rational):
-            self.data.append(value)
-        elif isinstance(value, (int, str)):
-            self.data.append(Rational(value))
-        else:
-            raise RationalValueError(
-                "До списку можна додавати лише Rational, int або рядок виду 'n/d'."
-            )
-
-    def __str__(self):
-        return "[" + ", ".join(str(x) for x in self.data) + "]"
+            result = eval(" ".join(tokens))
+            print(result())
 
 
-try:
-    r1 = Rational(2, 4)
-    r2 = Rational("3/5")
-    print(r1)
-    print(r2)
-    print(r1 + r2)
-    print(r1 - 1)
-    print(r1 * 2)
-    print(r2 / r1)
-    print(r1())
-    print(r1["n"])
-    print(r1["d"])
-    r1["n"] = 10
-    print(r1)
-
-    lst = RationalList()
-    lst.append(r1)
-    lst.append(5)
-    lst.append("7/8")
-    print(lst)
-    lst.append([1, 2])
-except (RationalError, RationalValueError) as e:
-    print(f"{type(e).__name__}: {e}")
+if __name__ == "__main__":
+    evaluate_expressions_from_file()
