@@ -1,0 +1,80 @@
+from math import factorial, log, prod
+
+# ================= 8.3.3 =================
+
+def seq_833a(x):
+    k = 0
+    while True:
+        yield (x**k) / (factorial(k+1) * factorial(k))
+        k += 1
+
+def prod_833b(n):
+    return prod(2 + 1/i for i in range(1, n+1))
+
+def mat_833c(n, a):
+    return [[a if i==j else 1 if abs(i-j)==1 else 0 for j in range(n)] for i in range(n)]
+
+def sum_833d(n):
+    a1, a2, s = 1, 1, 2
+    for k in range(3, n + 1):
+        a1, a2 = a2, a2 + a1 / (k**2)
+        s += a2
+    return s
+
+def ln_taylor(x, eps=1e-6):
+    s, k = 0, 1
+    while abs(term := ((-1)**(k+1)) * (x**k) / k) >= eps:
+        s += term
+        k += 1
+    return s
+
+
+# ================= 8.3.4 =================
+
+def seq_834a(x):
+    k = 0
+    while True:
+        yield ((-1)**k) * (x**k) / factorial(k*k + k)
+        k += 1
+
+def prod_834b(n):
+    return prod(1 - 1/(i**2) for i in range(2, n+1))
+
+def mat_834c(n):
+    return [[5 if i==j else 3 if j==i+1 else 2 if j==i-1 else 0 for j in range(n)] for i in range(n)]
+
+def sum_834d(n):
+    a1, a2, s = 0, 1, 1
+    for k in range(3, n + 1):
+        a1, a2 = a2, a2 + a1 / ((k-1)**2)
+        s += a2
+    return s
+
+def inverse_taylor(x, eps=1e-6):
+    s, k = 0, 0
+    while abs(term := ((-1)**k) * (x**k)) >= eps:
+        s += term
+        k += 1
+    return s
+
+
+# ================= Тестування =================
+
+print("--- ЗАВДАННЯ 8.3.3 ---")
+gen_a = seq_833a(2)
+print("a) Послідовність:", [next(gen_a) for _ in range(5)])
+print("b) Добуток:", prod_833b(5))
+print("c) Матриця:")
+for row in mat_833c(5, 3): print(f"   {row}")
+print("d) Сума:", sum_833d(10))
+print("e) Тейлор ln(1+x):", ln_taylor(0.5), "| math.log:", log(1.5))
+
+
+print("\n--- ЗАВДАННЯ 8.3.4 ---")
+gen_a2 = seq_834a(2)
+print("a) Послідовність:", [next(gen_a2) for _ in range(5)])
+print("b) Добуток:", prod_834b(10))
+print("c) Матриця:")
+for row in mat_834c(6): print(f"   {row}")
+print("d) Сума:", sum_834d(10))
+print("e) Тейлор 1/(1+x):", inverse_taylor(0.5), "| Точно:", 1/1.5)
