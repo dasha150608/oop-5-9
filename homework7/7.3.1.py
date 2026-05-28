@@ -14,11 +14,11 @@ class Rational:
             elif isinstance(arg, int):
                 self.n, self.d = arg, 1
             else:
-                raise RationalValueError("Некоректні аргументи конструктора.")
+                raise RationalValueError("Некоректно")
         elif len(args) == 2:
             self.n, self.d = args
         else:
-            raise RationalValueError("Некоректні аргументи конструктора.")
+            raise RationalValueError("Некоректно")
 
         if self.d == 0:
             raise RationalError("Знаменник не може дорівнювати нулю.")
@@ -62,7 +62,7 @@ class Rational:
         if key == "n":
             self.n = value
         elif key == "d":
-            if value == 0: raise RationalError("Знаменник не може бути нулем.")
+            if value == 0: raise RationalError("Знаменник не може дорівнювати нулю")
             self.d = value
         else:
             raise KeyError("Ключ має бути 'n' або 'd'.")
@@ -83,7 +83,7 @@ class RationalList:
         try:
             self.data.append(Rational(value))
         except Exception:
-            raise RationalValueError("До списку можна додавати лише Rational, int або рядок виду 'n/d'.")
+            raise RationalValueError("До списку можна додавати лише раціональні, цілі або рядок 'n/d'.")
 
     def __str__(self):
         return "[" + ", ".join(str(x) for x in self.data) + "]"
