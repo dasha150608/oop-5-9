@@ -1,0 +1,48 @@
+class Student:
+    def __init__(self, r, m):
+        self.c = 0; self.r = r; self.m = m; self.e = False
+class HumanitarianStudent(Student):
+    def accept(self, v): v.visit_hum(self)
+class NaturalStudent(Student):
+    def accept(self, v): v.visit_nat(self)
+class MixedStudent(Student):
+    def accept(self, v): v.visit_mix(self)
+class HumTeacher:
+    def __init__(self, c): self.c = c
+    def visit_hum(self, s): s.c += self.c
+    def visit_nat(self, s): pass
+    def visit_mix(self, s): s.c += self.c
+class NatTeacher:
+    def __init__(self, c): self.c = c
+    def visit_hum(self, s): pass
+    def visit_nat(self, s): s.c += self.c
+    def visit_mix(self, s): s.c += self.c
+class Expense:
+    def __init__(self, a): self.a = a
+    def p(self, s):
+        if s.m >= self.a: s.m -= self.a
+        else: s.e = True
+    def visit_hum(self, s): self.p(s)
+    def visit_nat(self, s): self.p(s)
+    def visit_mix(self, s): self.p(s)
+class Income:
+    def __init__(self, a): self.a = a
+    def p(self, s): s.m += self.a
+    def visit_hum(self, s): self.p(s)
+    def visit_nat(self, s): self.p(s)
+    def visit_mix(self, s): self.p(s)
+
+with open("input01.txt", "r", encoding="utf-8") as f:
+    d = f.read().split()
+
+if d:
+    t, r, m = d[0], int(d[1]), int(d[2])
+    s = HumanitarianStudent(r, m) if t == "humanitarian" else NaturalStudent(r, m) if t == "natural" else MixedStudent(r, m)
+    for i in range(3, len(d), 3):
+        c1, c2, v = d[i], d[i+1], int(d[i+2])
+        if c1 == "teach" and c2 == "humanitarian": o = HumTeacher(v)
+        elif c1 == "teach" and c2 == "natural": o = NatTeacher(v)
+        elif c1 == "pay": o = Expense(v)
+        else: o = Income(v)
+        s.accept(o)
+    print("Yes" if not s.e and s.c >= s.r else "No")
