@@ -11,8 +11,13 @@ def seq_833a(x):
 def prod_833b(n):
     return prod(2 + 1/i for i in range(1, n+1))
 
-def mat_833c(n, a):
-    return [[a if i==j else 1 if abs(i-j)==1 else 0 for j in range(n)] for i in range(n)]
+def det_833c(n, a):
+    if n == 1: return a
+    if n == 2: return a**2 - 1
+    d1, d2 = a, a**2 - 1
+    for i in range(3, n + 1):
+        d1, d2 = d2, a * d2 - d1
+    return d2
 
 def sum_833d(n):
     a1, a2, s = 1, 1, 2
@@ -40,8 +45,13 @@ def seq_834a(x):
 def prod_834b(n):
     return prod(1 - 1/(i**2) for i in range(2, n+1))
 
-def mat_834c(n):
-    return [[5 if i==j else 3 if j==i+1 else 2 if j==i-1 else 0 for j in range(n)] for i in range(n)]
+def det_834c(n):
+    if n == 1: return 5
+    if n == 2: return 19
+    d1, d2 = 5, 19
+    for i in range(3, n + 1):
+        d1, d2 = d2, 5 * d2 - 6 * d1
+    return d2
 
 def sum_834d(n):
     a1, a2, s = 0, 1, 1
@@ -64,7 +74,7 @@ print("--- ЗАВДАННЯ 8.3.3 ---")
 gen_a = seq_833a(2)
 print("a) Послідовність:", [next(gen_a) for _ in range(5)])
 print("b) Добуток:", prod_833b(5))
-print("c) Матриця:")
+print("c) Визначник:")
 for row in mat_833c(5, 3): print(f"   {row}")
 print("d) Сума:", sum_833d(10))
 print("e) Тейлор ln(1+x):", ln_taylor(0.5), "| math.log:", log(1.5))
@@ -74,7 +84,7 @@ print("\n--- ЗАВДАННЯ 8.3.4 ---")
 gen_a2 = seq_834a(2)
 print("a) Послідовність:", [next(gen_a2) for _ in range(5)])
 print("b) Добуток:", prod_834b(10))
-print("c) Матриця:")
+print("c) Визначник:")
 for row in mat_834c(6): print(f"   {row}")
 print("d) Сума:", sum_834d(10))
 print("e) Тейлор 1/(1+x):", inverse_taylor(0.5), "| Точно:", 1/1.5)
